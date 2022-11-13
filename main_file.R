@@ -1,17 +1,25 @@
-install.packages('dplyr')
-install.packages('ggplot2')
+install.packages(c('dplyr', 'ggplot2', 'randomForest'))
 library('dplyr')
 library('ggplot2')
+library('randomForest')
 
-View(dplus)
-
-dplus <- read.csv("C:/Users/ashwa/OneDrive/Documents/Columbia/Data Analysis/disney_plus_titles.csv")
 valstat <- read.csv("C:/Users/ashwa/OneDrive/Documents/Columbia/Data Analysis/valorant-stats.csv")
-
-dplus <- data.frame(dplus$type, dplus$title, dplus$listed_in, dplus$duration, dplus$release_year, dplus$rating, dplus$country)
 valstat <- data.frame(valstat$Weapon.Type, valstat$Price, valstat$Fire.Rate, valstat$Wall.Penetration, valstat$Magazine.Capacity, valstat$BDMG_0, valstat$BDMG_1, valstat$BDMG_2)
+colnames(valstat) <- c('Type', 'Price', 'Fire.Rate', 'Wall.Penetration', 'Magazine.Capacity', 'BDMG_0', 'BDMG_1', 'BDMG_2')
 
-#Hypothesis 1 for Disney+: Media rated PG has the longest duration.
-#Hypothesis 2 for Disney+: TV shows are more likely to be categorized as "Family" than "Drama".
 #Hypothesis 1 for Valorant: Sidearms are the most cost-effective weapon type.
 #Hypothesis 2 for Valorant: Weapons with high fire rates have lower wall penetration.
+
+ggplot(valstat, aes(x=Type, y=valstat$BDMG_2)) + geom_tile()
+
+index <- sample(2, nrow(valstat), replace=TRUE, prob=(c(0.9, 0.1)))
+
+trainData <- valstat[index == 1, ]
+testData <- valstat[index == 2, ]
+trainData <- na.omit(trainData)
+
+valmodel <- randomForest(as.factor(Type)~., data=trainData)
+
+sampleGun <- data.frame(Price=400, Fire.Rate=7, Wall.Penetration='Low', Magazine.Capacity=4, BDMG_0=40, BDMG_1=30, BDMG_2=20)
+
+predict(valmodel, sampleGun)
