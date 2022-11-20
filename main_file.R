@@ -1,7 +1,9 @@
-install.packages(c('dplyr', 'ggplot2', 'randomForest'))
+install.packages(c('dplyr', 'ggplot2', 'randomForest', 'shiny', 'shinythemes'))
 library('dplyr')
 library('ggplot2')
 library('randomForest')
+library('shiny')
+library('shinythemes')
 
 valstat <- read.csv("C:/Users/ashwa/OneDrive/Documents/Columbia/Data Analysis/valorant-stats.csv")
 valstat <- data.frame(valstat$Weapon.Type, valstat$Price, valstat$Fire.Rate, valstat$Wall.Penetration, valstat$Magazine.Capacity, valstat$BDMG_0, valstat$BDMG_1, valstat$BDMG_2)
@@ -20,6 +22,6 @@ trainData <- na.omit(trainData)
 
 valmodel <- randomForest(as.factor(Type)~., data=trainData)
 
-sampleGun <- data.frame(Price=400, Fire.Rate=7, Wall.Penetration='Low', Magazine.Capacity=4, BDMG_0=40, BDMG_1=30, BDMG_2=20)
+sampleGun <- data.frame(Price=1000, Fire.Rate=4, Wall.Penetration='Low', Magazine.Capacity=4, BDMG_0=20, BDMG_1=20, BDMG_2=10)
 
-predict(valmodel, sampleGun)
+predict(valmodel, testData)
